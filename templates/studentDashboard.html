@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+</head>
+<body>
+    
+    <h2>Welcome, {{ student_username }}</h2>
+
+
+    <div class="row align-items-center">
+          
+  
+        <div class="col">
+          <p>Username</p>
+        </div>
+        <div class="col">
+          <p><i>Status</i></p>
+        </div>
+
+        <div class="col">
+            <p><i>Comments</i></p>
+        </div>
+
+        <div class="col">
+            <p><i>Assignment Task</i></p>
+        </div>
+
+
+    </div>
+
+    <div class="row align-items-center">
+          
+  
+        <div class="col">
+          <p>{{ student.username }}</p>
+        </div>
+        <div class="col">
+          <p><i>{{ student.status }}</i></p>
+        </div>
+
+        <div class="col">
+            <p><i>{{ student.comment }}</i></p>
+        </div>
+
+        <div class="col">
+            <p><i>{{ student.assignment }}</i></p>
+        </div>
+
+
+    </div>
+
+
+    <form method="post">
+      <p>
+          <b><label for="content">If your assignment is uncheck then you can select uncheck</label></b>
+      </p>
+     
+
+      
+      <p>
+          <input id="status-uncheck" name="status" required type="radio" value="uncheck">
+          <label for="status-0">Uncheck</label>
+      </p>
+      <p>
+          <input id="status-check" name="status" required type="radio" value="check">
+          <label for="status-1">My assignment is checke</label>
+      </p>
+      <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+
+    <a href="{{ url_for('student_logout') }}">Logout</a>
+
+</body>
+</html>

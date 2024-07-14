@@ -33,9 +33,9 @@ class UserFactory:
     def create_user(user_type, username, password):
         if user_type == 'admin':
             return admins.insert_one({'username': username, 'password': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())})
-        elif user_type == 'doctor':
+        elif user_type == 'teacher':
             return teachers.insert_one({'username': username, 'password': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())})
-        elif user_type == 'patient':
+        elif user_type == 'student':
             return students.insert_one({'username': username, 'password': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()), "status" : "uncheck"})
         else:
             raise ValueError("Invalid user type")
@@ -86,6 +86,54 @@ def adminDashboard():
 
 
 
+# Student code start here
+@app.route('/studentRegister', methods=['GET', 'POST'])
+def studentRegister():
+    if request.method == 'POST':
+        existing_user = students.find_one({'username': request.form['student_username']})
+    
+        if existing_user is None:
+            UserFactory.create_user('student', request.form['student_username'], request.form['student_password'])
+            session['student_username'] = request.form['student_username']
+            return redirect(url_for('studentDashboard'))
+        
+        return 'That username already exists!'
+    return render_template('studentRegister.html')
+
+
+@app.route('/student', methods=['GET', 'POST'])
+def student():
+    if 'student_username' in session:
+        return redirect(url_for('studentDashboard'))
+
+    if request.method == 'POST':
+        login_student = students.find_one({'username': request.form['student_username']})
+        if login_student:
+            if bcrypt.checkpw(request.form['student_password'].encode('utf-8'), login_student['password']):
+                session['student_username'] = request.form['student_username']
+                return redirect(url_for('studentDashboard'))
+        return 'Invalid username/password combination'
+    return render_template('studentLogin.html')
+
+
+
+@app.route('/studentDashboard', methods=['GET', 'POST'])
+def studentDashboard():
+    if 'student_username' in session:
+        students_data = list(db.students.find())
+        student_data = db.students.find_one({"username":session['student_username']})
+
+        if request.method=='POST':
+            status = request.form['status']
+            db.students.update_one({ "username": session['student_username'] }, { "$set": { "status": status } })
+            return render_template('studentDashboard.html', username=session['student_username'], students=students_data, student = student_data)
+        return render_template('studentDashboard.html', student_username=session['student_username'], students=students_data, student = student_data)    
+    return redirect(url_for('student'))
+
+
+# Student code end here
+
+
 @app.post('/<id>/deleteTeacherData/')
 def deleteDoctorData(id):
     teachers.delete_one({"_id": ObjectId(id)})
@@ -96,9 +144,16 @@ def deletePatientData(id):
     students.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('adminDashboard'))
 
-@app.route('/logout')
+@app.route('/admin_logout')
 def admin_logout():
     session.pop('admin_username', None)
+    return redirect(url_for('index'))
+
+
+
+@app.route('/student_logout')
+def student_logout():
+    session.pop('student_username', None)
     return redirect(url_for('index'))
 
 
