@@ -77,8 +77,8 @@ def admin():
 @app.route('/adminDashboard')
 def adminDashboard():
     if 'admin_username' in session:
-        students_data = list(db.students.find())
-        teachers_data = list(db.teachers.find())
+        students_data = list(students.find())
+        teachers_data = list(teachers.find())
         return render_template('adminDashboard.html', admin_username=session['admin_username'], students = students_data, teachers = teachers_data)
     return redirect(url_for('admin'))
 
@@ -135,12 +135,12 @@ def studentDashboard():
 
 
 @app.post('/<id>/deleteTeacherData/')
-def deleteDoctorData(id):
+def deleteTeacherData(id):
     teachers.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('adminDashboard'))
 
 @app.post('/<id>/deleteStudentData/')
-def deletePatientData(id):
+def deleteStudentData(id):
     students.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('adminDashboard'))
 
