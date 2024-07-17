@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 
 from Pages.testindex import testindex
+from Pages.test_admin_login import test_admin_login
 
 class UniversityManagementSystemTest(unittest.TestCase):
     @classmethod
@@ -14,12 +15,37 @@ class UniversityManagementSystemTest(unittest.TestCase):
         cls.driver.get("http://127.0.0.1:5000/")
         cls.driver.maximize_window()
         
-    def test_indexpage(self):
+    def test_indexpage_student_admin_portal_button(self):
         driver = self.driver
-        test_1 = testindex(driver)
-        test_1.clickAccessStudentPortal()
-        time.sleep(10)
+        test_index_page = testindex(driver)
+        test_index_page.clickAccessStudentPortal()
+        time.sleep(2)
+        driver.back()
+        time.sleep(2)
+        test_index_page.clickAccessAdminPortal()
+        time.sleep(2)
+        driver.back()
+        time.sleep(2)
         
+        
+    def test_admin_login_page(self):
+        driver = webdriver.Firefox()
+        driver.get("http://127.0.0.1:5000/admin")
+        test_admin_login_1 = test_admin_login(driver)
+        test_admin_login_1.enter_user_name("admin_1")
+        test_admin_login_1.enter_password("admin_1")
+        time.sleep(2)
+        test_admin_login_1.click_login_button()
+        time.sleep(2)
+        
+        driver.close()
+        
+        
+    
+        
+        
+        
+    
         
         
     
