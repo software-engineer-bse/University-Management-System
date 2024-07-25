@@ -6,6 +6,10 @@ class test_admin_login:
         self.password_id = "password"
         self.button_XPATH = "/html/body/div/div/div/div/form/input"
         
+    def open_page(self, link):
+        self.driver.get(link)
+        self.driver.maximize_window()
+        
     def enter_user_name(self, username):
         self.driver.find_element(By.ID, self.username_id).send_keys(username)
         
